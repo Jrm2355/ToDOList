@@ -95,10 +95,6 @@ class User implements UserInterface
         $this->email = $email;
     }
 
-    // public function getRoles()
-    // {
-    //     return array('ROLE_USER');
-    // }
     public function getRoles(): array
     {
         $roles = $this->roles;

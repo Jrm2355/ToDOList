@@ -84,13 +84,13 @@ class TaskController extends Controller
      */
     public function deleteTaskAction(Task $task)
     {
-        if($task->getUser() == null && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+        if($task->getUser() === null && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
             $em = $this->getDoctrine()->getManager();
             $em->remove($task);
             $em->flush();
             $this->addFlash('success', 'La tâche a bien été supprimée.');
         }
-        if($task->getUser() == $this->getUser() &&$task->getUser() != null ){
+        if($task->getUser() == $this->getUser() &&$task->getUser() !== null ){
             $em = $this->getDoctrine()->getManager();
             $em->remove($task);
             $em->flush();
