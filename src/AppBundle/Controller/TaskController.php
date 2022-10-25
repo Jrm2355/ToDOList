@@ -30,6 +30,7 @@ class TaskController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $task->setUser($this->getUser());
 
             $em->persist($task);
             $em->flush();
@@ -73,7 +74,7 @@ class TaskController extends Controller
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
 
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
+        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));            
 
         return $this->redirectToRoute('task_list');
     }
@@ -83,12 +84,18 @@ class TaskController extends Controller
      */
     public function deleteTaskAction(Task $task)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
-
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
-
+        if($task->getUser() == null && $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($task);
+            $em->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        }
+        if($task->getUser() == $this->getUser() &&$task->getUser() != null ){
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($task);
+            $em->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        }
         return $this->redirectToRoute('task_list');
     }
 }
